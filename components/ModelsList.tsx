@@ -4,12 +4,30 @@ import React, { memo, useMemo, useCallback } from "react";
 import Image from "next/image";
 import { useModels } from "../hooks/useModels";
 import type { Model } from "../lib/types";
+import { motion } from "framer-motion";
 
 interface ModelsListProps {
   typeId: string;
   onSelect: (model: Model) => void;
   renderItem?: (model: Model, children: React.ReactNode) => React.ReactNode;
 }
+
+// Animation for each card
+const fadeSlideUp = {
+  hidden: { opacity: 0, y: 40, filter: "blur(4px)" },
+  visible: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      delay: index * 0.12,
+      duration: 0.6,
+      ease: "easeOut",
+      type: "spring",
+      stiffness: 60,
+    },
+  }),
+};
 
 export const ModelsList: React.FC<ModelsListProps> = memo(
   ({ typeId, onSelect, renderItem }) => {
@@ -23,14 +41,24 @@ export const ModelsList: React.FC<ModelsListProps> = memo(
     );
 
     const renderCard = useCallback(
-      (model: Model) => {
+      (model: Model, index: number) => {
         const card = (
-          <button
+          <motion.button
+            custom={index}
+            variants={fadeSlideUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.15 }}
+            whileHover={{
+              scale: 1.05,
+              boxShadow: "0px 8px 20px rgba(0,0,0,0.15)",
+              transition: { duration: 0.3 },
+            }}
             className="flex flex-col items-center justify-center
               bg-white dark:bg-gradient-to-b dark:from-[#4998a455] dark:to-[#4998a4]
               border border-transparent rounded-2xl shadow-md
               transition-transform duration-300 ease-in-out
-              hover:scale-105 hover:ring-4 hover:ring-[#8b5cf6]/30
+              hover:ring-4 hover:ring-[#8b5cf6]/30
               hover:shadow-[0_0_30px_#8b5cf6] dark:hover:shadow-[0_0_30px_#8b5cf6]
               p-12 cursor-pointer aspect-[4/3] w-full h-full min-h-[240px]"
             onClick={() => onSelect(model)}
@@ -57,7 +85,7 @@ export const ModelsList: React.FC<ModelsListProps> = memo(
             >
               {model.name}
             </p>
-          </button>
+          </motion.button>
         );
 
         return renderItem ? renderItem(model, card) : card;
@@ -66,7 +94,7 @@ export const ModelsList: React.FC<ModelsListProps> = memo(
     );
 
     const content = useMemo(() => {
-      if (isLoading)
+      if (isLoading) {
         return (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -77,17 +105,22 @@ export const ModelsList: React.FC<ModelsListProps> = memo(
             ))}
           </div>
         );
+      }
 
-      if (isError)
-        return <div className="text-red-500 font-medium">Error loading models.</div>;
+      if (isError) {
+        return (
+          <div className="text-red-500 font-medium">Error loading models.</div>
+        );
+      }
 
-      if (!models || models.length === 0)
+      if (!models || models.length === 0) {
         return <div className="text-gray-500">No models found.</div>;
+      }
 
       return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full">
-          {models.map((model) => (
-            <div key={model.id}>{renderCard(model)}</div>
+          {models.map((model, index) => (
+            <div key={model.id}>{renderCard(model, index)}</div>
           ))}
         </div>
       );

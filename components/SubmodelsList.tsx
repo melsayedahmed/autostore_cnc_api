@@ -4,6 +4,22 @@ import React, { memo, useCallback, useMemo } from "react";
 import Image from "next/image";
 import { useSubmodels } from "../hooks/useSubmodels";
 import type { Submodel } from "../lib/types";
+import { motion } from "framer-motion";
+
+// Animation Variants
+const fadeSlideUp = {
+  hidden: { opacity: 0, y: 40, filter: "blur(4px)" },
+  visible: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      delay: index * 0.1, // نفس فكرة HomePageClient
+      duration: 0.6,
+      ease: "easeOut",
+    },
+  }),
+};
 
 interface SubmodelsListProps {
   modelId: string;
@@ -31,9 +47,14 @@ export const SubmodelsList: React.FC<SubmodelsListProps> = memo(
     );
 
     const renderCard = useCallback(
-      (submodel: Submodel) => {
+      (submodel: Submodel, index: number) => {
         const card = (
-          <button
+          <motion.button
+            custom={index}
+            variants={fadeSlideUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
             className="flex flex-col items-center justify-center
               bg-white dark:bg-gradient-to-b dark:from-[#4998a455] dark:to-[#4998a4]
               border border-transparent rounded-2xl shadow-md
@@ -70,7 +91,7 @@ export const SubmodelsList: React.FC<SubmodelsListProps> = memo(
             >
               {submodel.name}
             </span>
-          </button>
+          </motion.button>
         );
 
         return renderItem ? renderItem(submodel, card) : card;
@@ -112,8 +133,10 @@ export const SubmodelsList: React.FC<SubmodelsListProps> = memo(
 
       return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full">
-          {submodels.map((submodel) => (
-            <div key={submodel.id || submodel._id}>{renderCard(submodel)}</div>
+          {submodels.map((submodel, index) => (
+            <div key={submodel.id || submodel._id}>
+              {renderCard(submodel, index)}
+            </div>
           ))}
         </div>
       );

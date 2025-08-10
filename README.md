@@ -48,4 +48,3 @@ NEXT_PUBLIC_BACKGROUND_COLOR=hsl(0, 0%, 100%)
 3. Use the search functionality to quickly find specific items
 4. Use breadcrumbs to navigate back to previous levels
 5. View part details including images, dimensions, and points
-# autostore_cnc_api

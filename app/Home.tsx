@@ -25,11 +25,10 @@ import { useTheme } from "@/app/layout"; // ✅ استيراد الثيم من �
 import React, { useState, useRef, useEffect } from "react";
 import { search as searchApi } from "../lib/api";
 import { useRouter } from "next/navigation";
+import { createPortal } from "react-dom";
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-
-  
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -38,7 +37,6 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-
   const { isDarkMode } = useTheme();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
@@ -46,6 +44,19 @@ export default function Home() {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
 
+  const searchRef = useRef<HTMLDivElement>(null);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0, width: 0 });
+
+  useEffect(() => {
+    if (searchRef.current) {
+      const rect = searchRef.current.getBoundingClientRect();
+      setDropdownPos({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      });
+    }
+  }, [showDropdown]);
   const handleSearch = async (value: string) => {
     setQuery(value);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -70,13 +81,11 @@ export default function Home() {
     }, 300);
   };
 
-
-
-const getResultLink = (item: any): string => {
-  return `/types/${encodeURIComponent(item.type)}/models/${encodeURIComponent(
-    item.subtype
-  )}/submodels/${encodeURIComponent(item.submodel)}/years/${item.id}/parts`;
-};
+  const getResultLink = (item: any): string => {
+    return `/types/${encodeURIComponent(item.type)}/models/${encodeURIComponent(
+      item.subtype
+    )}/submodels/${encodeURIComponent(item.submodel)}/years/${item.id}/parts`;
+  };
   const carBrands = [
     { name: "ACURA", logo: "/placeholder.svg?height=80&width=80" },
     { name: "AION", logo: "/placeholder.svg?height=80&width=80" },
@@ -266,7 +275,7 @@ const getResultLink = (item: any): string => {
                 : "opacity-0 translate-y-10"
             }`}
           >
-            <div className="relative group">
+            <div className="relative group  z-50">
               {/* الخلفية المتوهجة */}
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl blur-xl opacity-25 group-hover:opacity-40 transition-opacity duration-500"></div>
 
@@ -275,7 +284,7 @@ const getResultLink = (item: any): string => {
                 className={`relative ${themeClasses.cardBg} rounded-2xl p-4 shadow-xl border border-white/10 backdrop-blur-lg transition-all duration-700`}
               >
                 {/* كونتينر الإنبت */}
-                <div className="relative  sm:w-full   z-[9999]">
+                <div ref={searchRef} className="relative w-full">
                   <input
                     type="text"
                     value={query}
@@ -290,39 +299,54 @@ const getResultLink = (item: any): string => {
                     onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
                   />
 
-                  {showDropdown && results.length > 0 && (
-                    <div
-                      className={`
-      absolute top-[130%] left-0 w-full
-      z-[999] max-h-72 overflow-y-auto
-      rounded-xl border shadow-2xl transition-all duration-300
-      ${
-        isDarkMode
-          ? "bg-slate-800 text-white border-gray-700"
-          : "bg-white text-black border-gray-200"
-      }
-    `}
-                    >
-                      {results.map((item, idx) => (
-                        <div
-                          key={item.id || idx}
-                          className="block px-4 py-3 hover:bg-blue-600 hover:text-white text-sm cursor-pointer transition-colors duration-200"
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            setShowDropdown(false);
-                            router.push(getResultLink(item));
-                          }}
-                        >
-                          <span className="font-semibold mr-2">
-                            {[item.type, item.subtype, item.submodel, item.year]
-                              .filter(Boolean)
-                              .join(" - ")}
-                          </span>
-                          {item.name || `${item.type} ${item.subtype}`}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  {showDropdown &&
+                    results.length > 0 &&
+                    createPortal(
+                      <div
+                        className={`
+        absolute
+        max-h-72 overflow-y-auto
+        rounded-xl border shadow-2xl transition-all duration-300
+        ${
+          isDarkMode
+            ? "bg-slate-800 text-white border-gray-700"
+            : "bg-white text-black border-gray-200"
+        }
+      `}
+                        style={{
+                          position: "absolute",
+                          top: dropdownPos.top,
+                          left: dropdownPos.left,
+                          width: dropdownPos.width,
+                          zIndex: 9999,
+                        }}
+                      >
+                        {results.map((item, idx) => (
+                          <div
+                            key={item.id || idx}
+                            className="px-4 py-3 hover:bg-blue-600 hover:text-white text-sm cursor-pointer transition-colors duration-200"
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              setShowDropdown(false);
+                              router.push(getResultLink(item));
+                            }}
+                          >
+                            <span className="font-semibold mr-2">
+                              {[
+                                item.type,
+                                item.subtype,
+                                item.submodel,
+                                item.year,
+                              ]
+                                .filter(Boolean)
+                                .join(" - ")}
+                            </span>
+                            {item.name || `${item.type} ${item.subtype}`}
+                          </div>
+                        ))}
+                      </div>,
+                      document.body
+                    )}
                 </div>
               </div>
             </div>
@@ -330,7 +354,7 @@ const getResultLink = (item: any): string => {
 
           {/* CTA Buttons */}
           <div
-            className={`flex flex-col sm:flex-row gap-6 justify-center mb-16 transition-all duration-1000 delay-600  ${
+            className={`flex flex-col sm:flex-row gap-6 justify-center mb-16 transition-all duration-1000 delay-600  z-0 ${
               isVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-10"

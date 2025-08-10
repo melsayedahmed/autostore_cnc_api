@@ -4,15 +4,28 @@ import React, { useMemo, useCallback } from "react";
 import Image from "next/image";
 import { useParts } from "../hooks/useParts";
 import type { Part } from "../lib/types";
+import { motion } from "framer-motion";
 
 interface PartsListProps {
   modelYearId: string;
   versionId?: string;
+  renderItem?: (
+    part: Part,
+    index: number,
+    children: React.ReactNode
+  ) => React.ReactNode;
 }
+
+// نفس الفيد سلايد أب زي الهوم
+const fadeSlideUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
 
 const PartsListComponent: React.FC<PartsListProps> = ({
   modelYearId,
   versionId,
+  renderItem,
 }) => {
   const {
     data: parts,
@@ -21,10 +34,8 @@ const PartsListComponent: React.FC<PartsListProps> = ({
     refetch,
   } = useParts(modelYearId, versionId);
 
-  // ✅ Prevent recalculations
   const memoizedParts = useMemo(() => parts || [], [parts]);
 
-  // ✅ Handle Image Error (Hide broken image)
   const handleImageError = useCallback(
     (e: React.SyntheticEvent<HTMLImageElement>) => {
       e.currentTarget.style.display = "none";
@@ -32,7 +43,6 @@ const PartsListComponent: React.FC<PartsListProps> = ({
     []
   );
 
-  // ✅ Skeleton Loader
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -46,7 +56,6 @@ const PartsListComponent: React.FC<PartsListProps> = ({
     );
   }
 
-  // ✅ Error UI مع Retry
   if (isError) {
     return (
       <div className="text-center text-red-500 p-4">
@@ -65,56 +74,71 @@ const PartsListComponent: React.FC<PartsListProps> = ({
     return <div className="text-gray-500 mt-6">No parts found.</div>;
   }
 
+  const renderCard = (part: Part) => (
+    <div
+      className="flex flex-col items-center justify-center 
+        bg-white dark:bg-gradient-to-b dark:from-[#4998a455] dark:to-[#4998a4] 
+        border border-transparent rounded-2xl shadow-md 
+        transition-transform duration-300 ease-in-out 
+        hover:scale-105 hover:ring-4 hover:ring-[#8b5cf6]/30 
+        hover:shadow-[0_0_30px_#8b5cf6] dark:hover:shadow-[0_0_30px_#8b5cf6] 
+        p-6 cursor-pointer aspect-[4/3] w-full min-h-[240px] overflow-hidden"
+    >
+      {part.image ? (
+        <div className="relative w-full h-20 mb-4">
+          <Image
+            src={part.image}
+            alt={part.name}
+            layout="fill"
+            objectFit="contain"
+            onError={handleImageError}
+            className="rounded"
+            priority={false}
+          />
+        </div>
+      ) : (
+        <div className="w-16 h-16 flex items-center justify-center bg-gray-100 dark:bg-gray-800 mb-4 rounded">
+          <span className="text-gray-400 dark:text-white text-2xl">🔩</span>
+        </div>
+      )}
+      <span className="font-medium text-center text-sm text-black dark:text-white truncate w-full">
+        {part.name}
+      </span>
+      {part.dimensions && (
+        <span className="text-xs text-gray-600 dark:text-gray-400 truncate">
+          {part.dimensions}
+        </span>
+      )}
+      {typeof part.points === "number" && (
+        <span className="text-xs text-gray-800 dark:text-gray-300">
+          Points: {part.points}
+        </span>
+      )}
+    </div>
+  );
+
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-      {memoizedParts.map((part) => (
-        <div
-          key={part.id}
-          className="flex flex-col items-center justify-center 
-          bg-white dark:bg-gradient-to-b dark:from-[#4998a455] dark:to-[#4998a4] 
-          border border-transparent rounded-2xl shadow-md 
-          transition-transform duration-300 ease-in-out 
-          hover:scale-105 hover:ring-4 hover:ring-[#8b5cf6]/30 
-          hover:shadow-[0_0_30px_#8b5cf6] dark:hover:shadow-[0_0_30px_#8b5cf6] 
-          p-6 cursor-pointer aspect-[4/3] w-full min-h-[240px] overflow-hidden"
-        >
-          {part.image ? (
-            <div className="relative w-full h-20 mb-4">
-              <Image
-                src={part.image}
-                alt={part.name}
-                layout="fill"
-                objectFit="contain"
-                onError={handleImageError}
-                className="rounded"
-                priority={false}
-              />
-            </div>
-          ) : (
-            <div className="w-16 h-16 flex items-center justify-center bg-gray-100 dark:bg-gray-800 mb-4 rounded">
-              <span className="text-gray-400 dark:text-white text-2xl">🔩</span>
-            </div>
-          )}
-          <span className="font-medium text-center text-sm text-black dark:text-white truncate w-full">
-            {part.name}
-          </span>
-          {part.dimensions && (
-            <span className="text-xs text-gray-600 dark:text-gray-400 truncate">
-              {part.dimensions}
-            </span>
-          )}
-          {typeof part.points === "number" && (
-            <span className="text-xs text-gray-800 dark:text-gray-300">
-              Points: {part.points}
-            </span>
-          )}
-        </div>
-      ))}
+      {memoizedParts.map((part, index) =>
+        renderItem ? (
+          renderItem(part, index, renderCard(part))
+        ) : (
+          <motion.div
+            key={part.id}
+            variants={fadeSlideUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+            transition={{ delay: index * 0.1, duration: 0.6 }}
+          >
+            {renderCard(part)}
+          </motion.div>
+        )
+      )}
     </div>
   );
 };
 
-// ✅ Memo مع مقارنة الـ props لتقليل Re-render
 export const PartsList = React.memo(
   PartsListComponent,
   (prevProps, nextProps) =>
