@@ -353,33 +353,6 @@ export default function Home() {
           </div>
 
           {/* CTA Buttons */}
-          <div
-            className={`flex flex-col sm:flex-row gap-6 justify-center mb-16 transition-all duration-1000 delay-600  z-0 ${
-              isVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-10"
-            }`}
-          >
-            <Button
-              size="lg"
-              className="group bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-lg px-10 py-6 rounded-2xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 text-white"
-            >
-              <Play className="mr-3 h-6 w-6 group-hover:scale-110 transition-transform" />
-              Watch Demo
-              <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className={`text-lg px-10 py-6 rounded-2xl border-2 ${
-                isDarkMode
-                  ? "border-white/20 bg-white/5 hover:bg-white/10 hover:border-white/30"
-                  : "border-slate-300 bg-white/50 hover:bg-white/80 hover:border-slate-400"
-              } backdrop-blur-sm transition-all duration-300`}
-            >
-              Book Consultation
-            </Button>
-          </div>
 
           {/* Floating Stats */}
           <div
@@ -513,27 +486,6 @@ export default function Home() {
                   upgraded to AI-powered protection. Experience the difference
                   that next-generation technology makes.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                  <Button
-                    size="lg"
-                    className="group bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-lg px-12 py-6 rounded-2xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 text-white"
-                  >
-                    <Zap className="mr-3 h-6 w-6 group-hover:rotate-12 transition-transform" />
-                    Start Protection Now
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className={`text-lg px-12 py-6 rounded-2xl border-2 ${
-                      isDarkMode
-                        ? "border-white/20 bg-white/5 hover:bg-white/10 hover:border-white/30"
-                        : "border-slate-300 bg-white/50 hover:bg-white/80 hover:border-slate-400"
-                    } backdrop-blur-sm transition-all duration-300`}
-                  >
-                    <Phone className="mr-3 h-6 w-6" />
-                    Call: (555) 123-4567
-                  </Button>
-                </div>
               </div>
             </div>
           </div>
@@ -542,106 +494,15 @@ export default function Home() {
 
       {/* Footer */}
       <footer
-        className={`relative z-10 py-16 px-6 border-t ${
+        className={`relative z-10 py-5 px-6 border-t ${
           isDarkMode ? "border-white/10" : "border-slate-200"
         } transition-all duration-700`}
       >
         <div className="container mx-auto">
-          <div className="grid md:grid-cols-4 gap-12">
-            <div>
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur opacity-75"></div>
-                  <div className="relative bg-gradient-to-r from-blue-500 to-purple-500 p-2 rounded-xl">
-                    <Shield className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-                <div>
-                  <span
-                    className={`text-xl font-bold bg-gradient-to-r ${themeClasses.gradient} bg-clip-text text-transparent`}
-                  >
-                    AutoShield AI
-                  </span>
-                  <p className={`text-xs ${themeClasses.textMuted}`}>
-                    Next-Gen Protection
-                  </p>
-                </div>
-              </div>
-              <p className={`${themeClasses.textMuted} mb-6 leading-relaxed`}>
-                Pioneering the future of vehicle protection with artificial
-                intelligence and quantum-grade materials.
-              </p>
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2 text-sm">
-                  <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                  <span className={themeClasses.textSecondary}>
-                    4.9/5 Rating
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {[
-              {
-                title: "Services",
-                items: [
-                  "AI Protection",
-                  "Nano Coating",
-                  "Smart Monitoring",
-                  "Quantum Shield",
-                ],
-              },
-              {
-                title: "Technology",
-                items: [
-                  "AI Analysis",
-                  "Self-Healing",
-                  "Real-time Tracking",
-                  "Mobile App",
-                ],
-              },
-              {
-                title: "Contact",
-                items: [
-                  { icon: Phone, text: "(555) 123-4567" },
-                  { icon: Mail, text: "hello@autoshieldai.com" },
-                  { icon: MapPin, text: "Silicon Valley, CA" },
-                ],
-              },
-            ].map((section, index) => (
-              <div key={index}>
-                <h3 className={`font-bold mb-6 ${themeClasses.text}`}>
-                  {section.title}
-                </h3>
-                <ul className="space-y-3">
-                  {section.items.map((item, itemIndex) => (
-                    <li key={itemIndex}>
-                      {typeof item === "string" ? (
-                        <a
-                          href="#"
-                          className={`${themeClasses.textMuted} hover:${themeClasses.text} transition-colors duration-300 hover:translate-x-1 inline-block`}
-                        >
-                          {item}
-                        </a>
-                      ) : (
-                        <div
-                          className={`flex items-center space-x-3 ${themeClasses.textMuted}`}
-                        >
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.text}</span>
-                        </div>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
           <div
-            className={`border-t ${
+            className={` ${
               isDarkMode ? "border-white/10" : "border-slate-200"
-            } mt-12 pt-8 text-center transition-all duration-700`}
+            } text-center transition-all duration-700`}
           >
             <p className={themeClasses.textMuted}>
               &copy; 2024 AutoShield AI. All rights reserved. | Powered by

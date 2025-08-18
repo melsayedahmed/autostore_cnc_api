@@ -65,6 +65,10 @@ const SearchBar = memo(() => {
     }, 300);
   };
 
+  useEffect(() => {
+    document.title = "Autostore Catalog";
+  }, []);
+
   return (
     <div className="relative w-64">
       <input
@@ -155,13 +159,13 @@ const Header = memo(() => {
                   isDarkMode ? "text-gray-300" : "text-slate-700"
                 } hover:${isDarkMode ? "text-white" : "text-slate-900"}`}
               >
-                About
+                Models
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 group-hover:w-full transition-all duration-300"></span>
               </Link>
             </nav>
 
             {/* Theme Toggle */}
-            <button
+            {/* <button
               onClick={toggleTheme}
               className={`relative w-14 h-7 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                 isDarkMode
@@ -180,7 +184,7 @@ const Header = memo(() => {
                   <Sun className="h-3 w-3 text-yellow-500" />
                 )}
               </div>
-            </button>
+            </button> */}
           </div>
         </div>
       </nav>
