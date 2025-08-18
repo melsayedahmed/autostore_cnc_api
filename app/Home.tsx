@@ -112,7 +112,7 @@ export default function Home() {
     {
       icon: Zap,
       title: "Instant Application",
-      description: "Revolutionary 60-minute installation process",
+      description: "Revolutionary 120-minute installation process",
       color: "from-purple-500 to-pink-500",
     },
     {
@@ -483,8 +483,7 @@ export default function Home() {
                   className={`text-xl ${themeClasses.textSecondary} mb-10 leading-relaxed`}
                 >
                   Join thousands of forward-thinking car owners who've already
-                  upgraded to AI-powered protection. Experience the difference
-                  that next-generation technology makes.
+                  upgraded to AI-powered protection.
                 </p>
               </div>
             </div>
