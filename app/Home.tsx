@@ -505,7 +505,7 @@ export default function Home() {
           >
             <p className={themeClasses.textMuted}>
               &copy; 2025 AutoStore. All rights reserved. | Powered by
-              Functo
+              MohabMohammed
             </p>
           </div>
         </div>
