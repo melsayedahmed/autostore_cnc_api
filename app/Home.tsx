@@ -505,8 +505,8 @@ export default function Home() {
             } text-center transition-all duration-700`}
           >
             <p className={themeClasses.textMuted}>
-              &copy; 2024 AutoShield AI. All rights reserved. | Powered by
-              Quantum Technology
+              &copy; 2025 AutoStore. All rights reserved. | Powered by
+              Functo
             </p>
           </div>
         </div>
