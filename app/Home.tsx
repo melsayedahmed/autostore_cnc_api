@@ -289,7 +289,7 @@ export default function Home() {
                     type="text"
                     value={query}
                     onChange={(e) => handleSearch(e.target.value)}
-                    placeholder="Search something awesome..."
+                    placeholder="Search Your Car..."
                     className={`w-full px-5 py-3 rounded-xl border border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm shadow-inner transition-all duration-300 placeholder:italic ${
                       isDarkMode
                         ? "bg-slate-800 text-white placeholder-gray-400"
