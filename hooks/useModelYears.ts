@@ -12,3 +12,5 @@ export function useModelYears(submodelId: string | undefined) {
     cacheTime: 30 * 60 * 1000, // الكاش يفضل 30 دقيقة بعد عدم الاستخدام
   });
 }
+
+export const fetchModelYears = () => {}

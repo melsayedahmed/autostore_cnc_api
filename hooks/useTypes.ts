@@ -33,4 +33,5 @@ export function useTypes(page: number) {
     isError,
   };
 }
-  
+
+export const fetchTypes = () => {}
