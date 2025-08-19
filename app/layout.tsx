@@ -70,7 +70,7 @@ const SearchBar = memo(() => {
   }, []);
 
   return (
-    <div className="relative w-64">
+    <div className="relative w-48">
       <input
         type="text"
         value={query}
